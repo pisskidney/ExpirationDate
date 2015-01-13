@@ -1,10 +1,11 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
-urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'expirationDate.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
+from expirationDate.views import HomePage
+
+urlpatterns = patterns(
+    '',
+    url(r'^$', HomePage.as_view(), name='home'),
 
     url(r'^admin/', include(admin.site.urls)),
 )
