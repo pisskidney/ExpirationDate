@@ -8,5 +8,7 @@ class PersonAdmin(admin.ModelAdmin):
                     'date_of_death', 'birth_place', 'address',
                     'postcode', 'phone', 'mobile', 'gender',
                     'is_deceased', 'religion')
+    search_fields = ['first_name', 'last_name', 'postcode', 'religion',
+                     'address']
 
 admin.site.register(Person, PersonAdmin)
