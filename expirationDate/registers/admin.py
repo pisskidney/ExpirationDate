@@ -22,5 +22,5 @@ class FuneralMonumentAdmin(admin.ModelAdmin):
                     'surface_area')
 
 admin.site.register(UpcomingFuneral, UpcomingFuneralAdmin)
-admin.site.register(GraveAdmin, Grave)
-admin.site.register(FuneralMonumentAdmin, FuneralMonument)
+admin.site.register(Grave, GraveAdmin)
+admin.site.register(FuneralMonument, FuneralMonumentAdmin)
