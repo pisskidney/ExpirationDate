@@ -24,6 +24,10 @@ $ pip install -r deploy/requirements.txt
 $ ./manage.py syncdb
 $ ./manage.py migrate
 $ ./manage.py runserver_plus
+
+```
+```sh
+Get over here! http://localhost:8000/admin
 ```
 
 ### Development
