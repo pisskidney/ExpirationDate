@@ -68,12 +68,7 @@ class FuneralMonument(WithImageMixin, models.Model):
 class AnnualDeathIndexRegister(Person):
     class Meta():
         proxy=True
-
-    # XXX: Daca o persoana are mai multe morminte de unde stiu in care e el inmormantat,
-    # avand in vedere ca nu pot sa fac interogarile astea pe grave pt ca nu are fieldurile parcel si position?
-    # XXX: Care e diferenta intre resting place si grave?
-    # XXX: Nu ar trebui ca si un grave sa aiba parcela/numar?
-    # XXX: position == number??
+        
 
     def cemetery(self):
         return self.grave_set.first().cemetery.name
