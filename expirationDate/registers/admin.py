@@ -36,7 +36,7 @@ class AnnualDeathIndexRegisterAdmin(admin.ModelAdmin):
     search_fields = ['first_name', 'last_name']
 
     def get_queryset(self, request):
-        q = self.model.objects.filter(resting_places__isnull=False)
+        q = self.model.objects.filter(grave__isnull=False)
         return q.order_by('last_name', '-date_of_death')
 
     def has_add_permission(self, request):

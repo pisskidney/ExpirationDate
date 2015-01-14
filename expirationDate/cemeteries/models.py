@@ -18,7 +18,8 @@ class Cemetery(models.Model):
     def __str__(self):
         return self.name
 
-
+# TODO: sa decidem daca mai avem nevoie de modelul asta avand in vedere ca 
+# toate informatiile se regasesc in modelul grave
 class RestingPlace(models.Model):
     cemetery = models.ForeignKey(Cemetery, related_name='resting_places')
     resident = models.ForeignKey(Person, related_name='resting_places')

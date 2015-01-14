@@ -42,6 +42,9 @@ class Grave(WithImageMixin, models.Model):
     surface_area = models.DecimalField(_('surface area'),
                                        max_digits=5, decimal_places=2)
     has_funeral_constructions = models.BooleanField(default=False)
+    parcel = models.SmallIntegerField(_('parcel'), default=0)
+    row = models.SmallIntegerField(_('row'), default=0)
+    position = models.SmallIntegerField(_('position'), default=0)
 
     def __str__(self):
         return "Cemetery: {} Owner: {}".format(self.cemetery.name,
@@ -63,7 +66,7 @@ class FuneralMonument(WithImageMixin, models.Model):
 
 
 class AnnualDeathIndexRegister(Person):
-    class Meta(object):
+    class Meta():
         proxy=True
 
     # XXX: Daca o persoana are mai multe morminte de unde stiu in care e el inmormantat,
@@ -73,13 +76,13 @@ class AnnualDeathIndexRegister(Person):
     # XXX: position == number??
 
     def cemetery(self):
-        return self.resting_places.all()[0].cemetery.name
+        return self.grave_set.first().cemetery.name
     cemetery.short_description = _('Cemetery')
 
     def parcel(self):
-        return self.resting_places.all()[0].parcel
+        return self.grave_set.first().parcel
     parcel.short_description = _('Parcel')
 
     def number(self):
-        return self.resting_places.all()[0].position
+        return self.grave_set.first().position
     number.short_description = _('Number')
