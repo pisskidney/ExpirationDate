@@ -34,8 +34,12 @@ class Person(models.Model):
     def __str__(self):
         return "{} {}".format(self.first_name, self.last_name)
 
+    @property
+    def full_name(self):
+        return "{} {}".format(self.first_name, self.last_name)
+
     def save(self, *args, **kwargs):
-        if not all([self.is_deceased, self.date_of_death]):
+        if any([self.is_deceased, self.date_of_death]):
             raise ValueError("If the person died you must"
                              "supply the date of death")
         return super().save(args, kwargs)

@@ -15,6 +15,9 @@ class Cemetery(models.Model):
     class Meta:
         verbose_name_plural = "cemeteries"
 
+    def __str__(self):
+        return self.name
+
 
 class RestingPlace(models.Model):
     cemetery = models.ForeignKey(Cemetery, related_name='resting_places')

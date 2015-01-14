@@ -7,7 +7,7 @@ from registers.models import (
 
 class UpcomingFuneralAdmin(admin.ModelAdmin):
     list_display = ('deceased', 'resting_place', 'funeral_date',
-                    'date_added',)
+                    'date_added', 'render_image')
 
     search_fields = ['resting_place', 'funeral_date', 'date_added']
 
@@ -15,14 +15,18 @@ class UpcomingFuneralAdmin(admin.ModelAdmin):
 class GraveAdmin(admin.ModelAdmin):
     list_display = ('cemetery', 'owner', 'deceased',
                     'receipt_number', 'funeral_date',
-                    'surface_area')
-    search_fields = ['owner', 'receipt_number', 'funeral_date']
+                    'surface_area', 'render_image')
+
+    list_display_links = ('cemetery', 'owner', 'deceased')
+
+    search_fields = ['owner__first_name', 'owner__last_name',
+                     'receipt_number', 'funeral_date']
 
 
 class FuneralMonumentAdmin(admin.ModelAdmin):
     list_display = ('location', 'owner', 'deceased',
                     'receipt_number', 'funeral_date',
-                    'surface_area')
+                    'surface_area', 'render_image')
     search_fields = ['location', 'owner', 'funeral_date']
 
 admin.site.register(UpcomingFuneral, UpcomingFuneralAdmin)
