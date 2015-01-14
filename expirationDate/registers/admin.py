@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from registers.models import (
-    UpcomingFuneral, Grave, FuneralMonument
+    UpcomingFuneral, Grave, FuneralMonument, AnnualDeathIndexRegister
 )
 
 
@@ -29,6 +29,21 @@ class FuneralMonumentAdmin(admin.ModelAdmin):
                     'surface_area', 'render_image')
     search_fields = ['location', 'owner', 'funeral_date']
 
+
+class AnnualDeathIndexRegisterAdmin(admin.ModelAdmin):
+    list_display = ('first_name', 'last_name', 'cemetery', 'parcel', 'number')
+
+    search_fields = ['first_name', 'last_name']
+
+    def get_queryset(self, request):
+        q = self.model.objects.filter(resting_places__isnull=False)
+        return q.order_by('last_name', '-date_of_death')
+
+    def has_add_permission(self, request):
+        return False
+
+
 admin.site.register(UpcomingFuneral, UpcomingFuneralAdmin)
 admin.site.register(Grave, GraveAdmin)
 admin.site.register(FuneralMonument, FuneralMonumentAdmin)
+admin.site.register(AnnualDeathIndexRegister, AnnualDeathIndexRegisterAdmin)
