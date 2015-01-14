@@ -39,7 +39,7 @@ class Person(models.Model):
         return "{} {}".format(self.first_name, self.last_name)
 
     def save(self, *args, **kwargs):
-        if any([self.is_deceased, self.date_of_death]):
+        if bool(self.is_deceased) != bool(self.date_of_death):
             raise ValueError("If the person died you must"
                              "supply the date of death")
         return super().save(args, kwargs)
