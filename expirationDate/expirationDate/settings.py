@@ -10,6 +10,10 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
+
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -29,7 +33,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 DJANGO_APPS = (
-    'grappelli',
+    'suit',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +44,7 @@ DJANGO_APPS = (
 
 THIRD_PARTY_APPS = (
     'django_extensions',
+    'reversion',
 )
 
 PROJECT_APPS = (
@@ -112,3 +117,14 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
 )
+
+TEMPLATE_CONTEXT_PROCESSORS = TCP + (
+    'django.core.context_processors.request',
+)
+
+SUIT_CONFIG = {
+    # header
+    'ADMIN_NAME': 'Cemetery Management',
+    # 'HEADER_DATE_FORMAT': 'l, j. F Y',
+    # 'HEADER_TIME_FORMAT': 'H:i',
+}

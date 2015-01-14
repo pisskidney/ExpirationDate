@@ -1,15 +1,17 @@
 from django.contrib import admin
 
+import reversion
+
 from cemeteries.models import Cemetery, RestingPlace
 
 
-class CemeteryAdmin(admin.ModelAdmin):
+class CemeteryAdmin(reversion.VersionAdmin):
     list_display = ('name', 'address', 'postcode', 'phone',
                     'mobile',)
     search_fields = ['name', 'address', 'postcode']
 
 
-class RestingPlaceAdmin(admin.ModelAdmin):
+class RestingPlaceAdmin(reversion.VersionAdmin):
     list_display = ('cemetery', 'resident', 'parcel',
                     'row', 'position')
     search_fields = ['cemetery__name', 'parcel', 'row', 'position']
