@@ -35,7 +35,7 @@ class UpcomingFuneral(WithImageMixin, models.Model):
 
 class Grave(WithImageMixin, models.Model):
     cemetery = models.ForeignKey(Cemetery)
-    owner = models.ForeignKey(Person, related_name='graves')
+    owner = models.ForeignKey(Person, related_name='graves', null=True, blank=True)
     deceased = models.ForeignKey(Person)
     receipt_number = models.BigIntegerField(_('receipt_number'))
     funeral_date = models.DateTimeField(_('funeral date'))
@@ -45,12 +45,15 @@ class Grave(WithImageMixin, models.Model):
     parcel = models.SmallIntegerField(_('parcel'), default=0)
     row = models.SmallIntegerField(_('row'), default=0)
     position = models.SmallIntegerField(_('position'), default=0)
+    social_services_request = models.BigIntegerField(_('IML request'), null=True, blank=True)
 
     def __str__(self):
-        return "Cemetery: {} Owner: {}".format(self.cemetery.name,
-                                               self.owner.full_name)
+        return "Cemetery: {} Position: {}".format(self.cemetery.name, 
+            self.position)
 
 
+# TODO: nu cred ca mai avem nevoie de asta ca e cod duplicat
+# putem sa facem doar un model cu proxy = True
 class FuneralMonument(WithImageMixin, models.Model):
     location = models.ForeignKey(RestingPlace)
     deceased = models.ForeignKey(Person, related_name="funeral_monuments")
@@ -66,9 +69,8 @@ class FuneralMonument(WithImageMixin, models.Model):
 
 
 class AnnualDeathIndexRegister(Person):
-    class Meta():
+    class Meta:
         proxy=True
-        
 
     def cemetery(self):
         return self.grave_set.first().cemetery.name
@@ -80,4 +82,30 @@ class AnnualDeathIndexRegister(Person):
 
     def number(self):
         return self.grave_set.first().position
+    number.short_description = _('Number')
+
+
+class AnnualOwnerlessDeathRegister(Grave):
+    class Meta:
+        proxy=True
+
+    def social_services_request(self):
+        return self.social_services_request
+    social_services_request.short_description = _('IML request')
+
+    def receipt_number(self):
+        return self.receipt_number
+    receipt_number.short_description = _('Recepit Number')
+
+    # se cere map dar nu avem si am pus coordonate si numar
+    def parcel(self):
+        return self.parcel
+    parcel.short_description = _('Parcel')
+
+    def row(self):
+        return self.row
+    row.short_description = _('Row')
+
+    def number(self):
+        return self.position
     number.short_description = _('Number')
