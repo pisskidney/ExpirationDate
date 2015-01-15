@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from persons.models import Person
-from .constants import RequestStatus
+from registers.constants import RequestStatus
 from cemeteries.models import RestingPlace, Cemetery
 
 
