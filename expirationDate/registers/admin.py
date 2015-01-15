@@ -1,3 +1,5 @@
+import datetime
+
 from django import forms
 from django.contrib import admin
 from django.forms import ValidationError
@@ -6,9 +8,10 @@ from django.utils import timezone
 import reversion
 
 from registers.models import (
-    UpcomingFuneral, Grave, FuneralMonument, AnnualDeathIndexRegister,
+    UpcomingFuneral, ExpiredGrave, Grave, FuneralMonument,
     AnnualOwnerlessDeathRegister, UpcomingFuneralArchive,
-    GraveOwnershipRequestsRegister
+    GraveOwnershipRequestsRegister, GraveOwnership, AnnualDeathIndexRegister,
+    GravesToExpireThisYear, GravesPayedThisYear
 )
 
 
@@ -46,12 +49,17 @@ class GraveAdminForm(forms.ModelForm):
                   or self.cleaned_data.get('owner')):
             raise ValidationError("Owner or IML request must be set")
 
+        if self.cleaned_data.get('owner'):
+            if not self.cleaned_data.get('receipt_number'):
+                raise ValidationError("Receipt number is mandatory if "
+                                      "the grave has an owner")
+
 
 class GraveAdmin(reversion.VersionAdmin):
     form = GraveAdminForm
+
     list_display = ('cemetery', 'owner', 'deceased',
-                    'receipt_number', 'funeral_date',
-                    'surface_area', 'parcel', 'row',
+                    'receipt_number', 'surface_area', 'parcel', 'row',
                     'position', 'social_services_request',
                     'render_image')
 
@@ -109,6 +117,84 @@ class GraveOwnershipRequestsRegisterAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, object=False):
         return False
 
+
+class ExpiredGraveAdmin(admin.ModelAdmin):
+
+    list_display = ('cemetery', 'owner', 'deceased',
+                    'receipt_number', 'surface_area', 'parcel', 'row',
+                    'position', 'social_services_request',
+                    'render_image')
+
+    list_display_links = ('cemetery', 'owner', 'deceased')
+
+    search_fields = ['owner__first_name', 'owner__last_name',
+                     'receipt_number', 'funeral_date']
+
+    def has_add_permission(self, request):
+        return False
+
+    def get_queryset(self, request):
+        expired_graves = GraveOwnership.objects.filter(
+            expiration_date__lt=timezone.now())
+        expired_grave_ids = [record.owned_grave.id
+                             for record in expired_graves]
+        return self.model.objects.filter(pk__in=expired_grave_ids)
+
+
+class GravesToExpireThisYearAdmin(admin.ModelAdmin):
+
+    list_display = ('cemetery', 'owner', 'deceased',
+                    'receipt_number', 'surface_area', 'parcel', 'row',
+                    'position', 'social_services_request',
+                    'render_image')
+
+    list_display_links = ('cemetery', 'owner', 'deceased')
+
+    search_fields = ['owner__first_name', 'owner__last_name',
+                     'receipt_number', 'funeral_date']
+
+    def has_add_permission(self, request):
+        return False
+
+    def get_queryset(self, request):
+        now = timezone.now()
+        year_end = datetime.date(now.year + 1, 1, 1)
+
+        to_expire = GraveOwnership.objects.filter(
+            expiration_date__lt=year_end,
+            expiration_date__gt=now)
+        to_expire_ids = [record.owned_grave.id for record in to_expire]
+
+        return self.model.objects.filter(pk__in=to_expire_ids)
+
+
+class GravesPayedThisYearAdmin(admin.ModelAdmin):
+
+    list_display = ('cemetery', 'owner', 'deceased',
+                    'receipt_number', 'surface_area', 'parcel', 'row',
+                    'position', 'social_services_request',
+                    'render_image')
+
+    list_display_links = ('cemetery', 'owner', 'deceased')
+
+    search_fields = ['owner__first_name', 'owner__last_name',
+                     'receipt_number', 'funeral_date']
+
+    def has_add_permission(self, request):
+        return False
+
+    def get_queryset(self, request):
+        now = timezone.now()
+        lower_bound = datetime.date(now.year + 20, 1, 1)
+        upper_bound = datetime.date(now.year + 20, now.month, now.day)
+        payed = GraveOwnership.objects.filter(
+            expiration_date__lt=upper_bound,
+            expiration_date__gt=lower_bound)
+
+        payed_ids = [record.owned_grave.id for record in payed]
+
+        return self.model.objects.filter(pk__in=payed_ids)
+
 admin.site.register(UpcomingFuneral, UpcomingFuneralAdmin)
 admin.site.register(UpcomingFuneralArchive, UpcomingFuneralAdminArchive)
 admin.site.register(Grave, GraveAdmin)
@@ -118,3 +204,8 @@ admin.site.register(AnnualOwnerlessDeathRegister,
                     AnnualOwnerlessDeathRegisterAdmin)
 admin.site.register(GraveOwnershipRequestsRegister,
                     GraveOwnershipRequestsRegisterAdmin)
+admin.site.register(ExpiredGrave, ExpiredGraveAdmin)
+admin.site.register(GravesToExpireThisYear,
+                    GravesToExpireThisYearAdmin)
+admin.site.register(GravesPayedThisYear,
+                    GravesToExpireThisYearAdmin)

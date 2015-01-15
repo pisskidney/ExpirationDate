@@ -1,5 +1,7 @@
+import datetime
+
 from django.db import models
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
@@ -14,9 +16,9 @@ class Grave(WithImageMixin, models.Model):
     cemetery = models.ForeignKey(Cemetery)
     owner = models.ForeignKey(Person, related_name='graves',
                               null=True, blank=True)
-    deceased = models.ForeignKey(Person)
-    receipt_number = models.BigIntegerField(_('receipt_number'))
-    funeral_date = models.DateTimeField(_('funeral date'))
+    deceased = models.ForeignKey(Person, unique=True, null=True, blank=True)
+    receipt_number = models.BigIntegerField(_('receipt_number'), null=True,
+                                            blank=True)
     surface_area = models.DecimalField(_('surface area'),
                                        max_digits=5, decimal_places=2)
     has_funeral_constructions = models.BooleanField(default=False)
@@ -29,6 +31,27 @@ class Grave(WithImageMixin, models.Model):
     def __str__(self):
         return "Cemetery: {} Position: {}".format(
             self.cemetery.name, self.position)
+
+    def save(self, *args, **kwargs):
+        super(Grave, self).save()
+        if not self.owner:
+            return super(Grave, self).save()
+
+        try:
+            GraveOwnership.objects.get(person=self.owner,
+                                       owned_grave=self)
+        except ObjectDoesNotExist:
+            new_record = GraveOwnership()
+            new_record.person = self.owner
+            new_record.owned_grave = self
+
+            date = timezone.now()
+            new_record.expiration_date = datetime.date(year=date.year + 20,
+                                                       month=date.month,
+                                                       day=date.day)
+
+            new_record.save()
+
 
 
 class UpcomingFuneral(models.Model):
@@ -121,3 +144,27 @@ class GraveOwnershipRequestsRegister(models.Model):
         choices=RequestStatus.REQUEST_OPTIONS,
         default=RequestStatus.FAVORABLE
     )
+
+
+class ExpiredGrave(Grave):
+
+    class Meta:
+        proxy = True
+
+
+class GravesToExpireThisYear(Grave):
+
+    class Meta:
+        proxy = True
+
+
+class GravesPayedThisYear(Grave):
+
+    class Meta:
+        proxy = True
+
+
+class GraveOwnership(models.Model):
+    person = models.ForeignKey(Person, related_name='person')
+    owned_grave = models.ForeignKey(Grave, related_name='owned_grave')
+    expiration_date = models.DateField(_("expiration_date"))
