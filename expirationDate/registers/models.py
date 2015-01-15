@@ -37,7 +37,8 @@ class UpcomingFuneral(WithImageMixin, models.Model):
 
 class Grave(WithImageMixin, models.Model):
     cemetery = models.ForeignKey(Cemetery)
-    owner = models.ForeignKey(Person, related_name='graves', null=True, blank=True)
+    owner = models.ForeignKey(
+        Person, related_name='graves', null=True, blank=True)
     deceased = models.ForeignKey(Person)
     receipt_number = models.BigIntegerField(_('receipt_number'))
     funeral_date = models.DateTimeField(_('funeral date'))
@@ -47,11 +48,14 @@ class Grave(WithImageMixin, models.Model):
     parcel = models.SmallIntegerField(_('parcel'), default=0)
     row = models.SmallIntegerField(_('row'), default=0)
     position = models.SmallIntegerField(_('position'), default=0)
-    social_services_request = models.BigIntegerField(_('IML request'), null=True, blank=True)
+    social_services_request = models.BigIntegerField(
+        _('IML request'),
+        null=True,
+        blank=True)
 
     def __str__(self):
-        return "Cemetery: {} Position: {}".format(self.cemetery.name, 
-            self.position)
+        return "Cemetery: {} Position: {}".format(self.cemetery.name,
+                                                  self.position)
 
 
 # TODO: nu cred ca mai avem nevoie de asta ca e cod duplicat
@@ -71,8 +75,9 @@ class FuneralMonument(WithImageMixin, models.Model):
 
 
 class AnnualDeathIndexRegister(Person):
+
     class Meta:
-        proxy=True
+        proxy = True
 
     def cemetery(self):
         return self.grave_set.first().cemetery.name
@@ -88,8 +93,9 @@ class AnnualDeathIndexRegister(Person):
 
 
 class AnnualOwnerlessDeathRegister(Grave):
+
     class Meta:
-        proxy=True
+        proxy = True
 
     def social_services_request(self):
         return self.social_services_request
