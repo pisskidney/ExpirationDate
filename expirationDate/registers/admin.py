@@ -13,10 +13,10 @@ from registers.models import (
 
 
 class UpcomingFuneralAdmin(reversion.VersionAdmin):
-    list_display = ('deceased', 'resting_place', 'funeral_date',
+    list_display = ('deceased', 'grave', 'funeral_date',
                     'date_added')
 
-    search_fields = ['resting_place', 'funeral_date', 'date_added']
+    search_fields = ['grave', 'funeral_date', 'date_added']
 
     def get_queryset(self, request):
         queryset = self.model.objects.filter(
@@ -25,10 +25,10 @@ class UpcomingFuneralAdmin(reversion.VersionAdmin):
 
 
 class UpcomingFuneralAdminArchive(reversion.VersionAdmin):
-    list_display = ('deceased', 'resting_place', 'funeral_date',
+    list_display = ('deceased', 'grave', 'funeral_date',
                     'date_added')
 
-    search_fields = ['resting_place', 'funeral_date', 'date_added']
+    search_fields = ['grave', 'funeral_date', 'date_added']
 
     def get_queryset(self, request):
         queryset = self.model.objects.filter(

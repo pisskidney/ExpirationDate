@@ -2,7 +2,7 @@ from django.contrib import admin
 
 import reversion
 
-from cemeteries.models import Cemetery, RestingPlace
+from cemeteries.models import Cemetery
 
 
 class CemeteryAdmin(reversion.VersionAdmin):
@@ -11,13 +11,4 @@ class CemeteryAdmin(reversion.VersionAdmin):
     search_fields = ['name', 'address', 'postcode']
 
 
-class RestingPlaceAdmin(reversion.VersionAdmin):
-    list_display = ('cemetery', 'resident', 'parcel',
-                    'row', 'position')
-    search_fields = ['cemetery__name', 'parcel', 'row', 'position']
-
-    list_display_links = ('cemetery', 'resident')
-
-
 admin.site.register(Cemetery, CemeteryAdmin)
-admin.site.register(RestingPlace, RestingPlaceAdmin)
