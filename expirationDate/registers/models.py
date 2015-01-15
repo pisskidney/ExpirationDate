@@ -61,20 +61,10 @@ class UpcomingFuneralArchive(UpcomingFuneral):
         super(UpcomingFuneral, self).clean_fields()
 
 
-# TODO: nu cred ca mai avem nevoie de asta ca e cod duplicat
-# putem sa facem doar un model cu proxy = True
-class FuneralMonument(WithImageMixin, models.Model):
-    location = models.ForeignKey(Grave)
-    deceased = models.ForeignKey(Person, related_name="funeral_monuments")
-    owner = models.ForeignKey(Person)
-    receipt_number = models.BigIntegerField(_('receipt_number'))
-    funeral_date = models.DateTimeField(_('funeral date'))
-    surface_area = models.DecimalField(_('surface area'),
-                                       max_digits=5, decimal_places=2)
-    has_funeral_constructions = models.BooleanField(default=False)
+class FuneralMonument(Grave):
 
-    def __str__(self):
-        return "Owner: {}".format(self.owner.full_name)
+    class Meta:
+        proxy = True
 
 
 class AnnualDeathIndexRegister(Person):
