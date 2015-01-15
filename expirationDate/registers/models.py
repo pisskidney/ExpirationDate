@@ -167,3 +167,22 @@ class GraveOwnership(models.Model):
     person = models.ForeignKey(Person, related_name='person')
     owned_grave = models.ForeignKey(Grave, related_name='owned_grave')
     expiration_date = models.DateField(_("expiration_date"))
+
+
+class ContractsRegister(models.Model):
+    current_number = models.BigIntegerField(_('current_number'), unique=True)
+    contract_number = models.BigIntegerField(_('contract_number'), unique=True)
+    release_date = models.DateTimeField(_('release_date'))
+    owner = models.ForeignKey(Person)
+
+    def first_name(self):
+        return self.owner.first_name
+    first_name.short_description = _('First name')
+
+    def last_name(self):
+        return self.owner.last_name
+    last_name.short_description = _('Last name')
+
+    def address(self):
+        return self.owner.address
+    address.short_description = _('Address')
