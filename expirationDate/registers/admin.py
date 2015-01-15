@@ -65,8 +65,6 @@ class AnnualOwnerlessDeathRegisterAdmin(admin.ModelAdmin):
     list_display = ('receipt_number', 'social_services_request', 'parcel',
                                                              'row', 'number')
 
-    search_fields = ['social_services_request', 'number', 'parcel']
-
     def get_queryset(self, request):
         return self.model.objects.filter(owner__isnull=True)
 
