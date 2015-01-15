@@ -14,7 +14,7 @@ from registers.models import (
 
 class UpcomingFuneralAdmin(reversion.VersionAdmin):
     list_display = ('deceased', 'resting_place', 'funeral_date',
-                    'date_added', 'render_image')
+                    'date_added')
 
     search_fields = ['resting_place', 'funeral_date', 'date_added']
 
@@ -26,7 +26,7 @@ class UpcomingFuneralAdmin(reversion.VersionAdmin):
 
 class UpcomingFuneralAdminArchive(reversion.VersionAdmin):
     list_display = ('deceased', 'resting_place', 'funeral_date',
-                    'date_added', 'render_image')
+                    'date_added')
 
     search_fields = ['resting_place', 'funeral_date', 'date_added']
 

@@ -26,7 +26,7 @@ class WithImageMixin(models.Model):
     render_image.allow_tags = True
 
 
-class UpcomingFuneral(WithImageMixin, models.Model):
+class UpcomingFuneral(models.Model):
     deceased = models.ForeignKey(Person, related_name="upcomming_funerals")
     resting_place = models.ForeignKey(
         RestingPlace, related_name="resting_places")
