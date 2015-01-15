@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from persons.models import Person
+from registers.constants import RequestStatus
 from cemeteries.models import RestingPlace, Cemetery
 
 
@@ -117,3 +118,14 @@ class AnnualOwnerlessDeathRegister(Grave):
     def number(self):
         return self.position
     number.short_description = _('Number')
+
+
+class GraveOwnershipRequestsRegister(models.Model):
+    current_number = models.BigIntegerField(_('current_number'), unique=True)
+    registration_date = models.DateTimeField(_('registration_date'))
+    infocet_number = models.BigIntegerField(_('infocet_number'))
+    status = models.PositiveSmallIntegerField(
+        _('status'),
+        choices=RequestStatus.REQUEST_OPTIONS,
+        default=RequestStatus.FAVORABLE
+    )
