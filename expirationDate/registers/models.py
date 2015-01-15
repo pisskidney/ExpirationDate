@@ -13,8 +13,10 @@ class WithImageMixin(models.Model):
         abstract = True
 
     def render_image(self):
+        # Do not do this in production
         if self.image:
-            return u'<img src="%s" height="64"/>' % self.image.url
+            return u'<img src="{}" style="width:128px !important"/>'.format(
+                self.image.url)
         else:
             return '(No image)'
     render_image.short_description = 'Image preview'

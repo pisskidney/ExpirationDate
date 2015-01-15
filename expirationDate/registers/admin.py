@@ -2,13 +2,15 @@ from django import forms
 from django.contrib import admin
 from django.forms import ValidationError
 
+import reversion
+
 from registers.models import (
     UpcomingFuneral, Grave, FuneralMonument, AnnualDeathIndexRegister,
     AnnualOwnerlessDeathRegister
 )
 
 
-class UpcomingFuneralAdmin(admin.ModelAdmin):
+class UpcomingFuneralAdmin(reversion.VersionAdmin):
     list_display = ('deceased', 'resting_place', 'funeral_date',
                     'date_added', 'render_image')
 
@@ -25,7 +27,7 @@ class GraveAdminForm(forms.ModelForm):
             raise ValidationError("Owner or IML request must be set")
 
 
-class GraveAdmin(admin.ModelAdmin):
+class GraveAdmin(reversion.VersionAdmin):
     form = GraveAdminForm
     list_display = ('cemetery', 'owner', 'deceased',
                     'receipt_number', 'funeral_date',
@@ -39,7 +41,7 @@ class GraveAdmin(admin.ModelAdmin):
                      'receipt_number', 'funeral_date']
 
 
-class FuneralMonumentAdmin(admin.ModelAdmin):
+class FuneralMonumentAdmin(reversion.VersionAdmin):
     list_display = ('location', 'owner', 'deceased',
                     'receipt_number', 'funeral_date',
                     'surface_area', 'render_image')
