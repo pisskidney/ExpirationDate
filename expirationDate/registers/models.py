@@ -6,7 +6,7 @@ from django.utils import timezone
 
 from persons.models import Person
 from registers.constants import RequestStatus
-from cemeteries.models import RestingPlace, Cemetery
+from cemeteries.models import Grave, Cemetery
 
 
 class WithImageMixin(models.Model):
@@ -28,8 +28,7 @@ class WithImageMixin(models.Model):
 
 class UpcomingFuneral(WithImageMixin, models.Model):
     deceased = models.ForeignKey(Person, related_name="upcomming_funerals")
-    resting_place = models.ForeignKey(
-        RestingPlace, related_name="resting_places")
+    resting_place = models.ForeignKey(Grave, related_name="graves")
     funeral_date = models.DateTimeField(_('funeral date'))
     date_added = models.DateTimeField(_('date added'), auto_now_add=True)
 
@@ -56,31 +55,10 @@ class UpcomingFuneralArchive(UpcomingFuneral):
         super(UpcomingFuneral, self).clean_fields()
 
 
-class Grave(WithImageMixin, models.Model):
-    cemetery = models.ForeignKey(Cemetery)
-    owner = models.ForeignKey(Person, related_name='graves',
-                              null=True, blank=True)
-    deceased = models.ForeignKey(Person)
-    receipt_number = models.BigIntegerField(_('receipt_number'))
-    funeral_date = models.DateTimeField(_('funeral date'))
-    surface_area = models.DecimalField(_('surface area'),
-                                       max_digits=5, decimal_places=2)
-    has_funeral_constructions = models.BooleanField(default=False)
-    parcel = models.SmallIntegerField(_('parcel'), default=0)
-    row = models.SmallIntegerField(_('row'), default=0)
-    position = models.SmallIntegerField(_('position'), default=0)
-    social_services_request = models.BigIntegerField(
-        _('IML request'), null=True, blank=True)
-
-    def __str__(self):
-        return "Cemetery: {} Position: {}".format(
-            self.cemetery.name, self.position)
-
-
 # TODO: nu cred ca mai avem nevoie de asta ca e cod duplicat
 # putem sa facem doar un model cu proxy = True
 class FuneralMonument(WithImageMixin, models.Model):
-    location = models.ForeignKey(RestingPlace)
+    location = models.ForeignKey(Grave)
     deceased = models.ForeignKey(Person, related_name="funeral_monuments")
     owner = models.ForeignKey(Person)
     receipt_number = models.BigIntegerField(_('receipt_number'))
@@ -147,3 +125,37 @@ class GraveOwnershipRequestsRegister(models.Model):
         choices=RequestStatus.REQUEST_OPTIONS,
         default=RequestStatus.FAVORABLE
     )
+
+
+class GravesRegister(models.Model):
+    cemetery = models.ForeignKey(Cemetery)
+
+    def cemetery_name(self):
+        return self.cemetery.name
+
+    cemetery.short_description = _('Cemetery')
+    grave = models.ForeignKey(Grave)
+
+    def parcel(self):
+        return self.grave.parcel
+
+    def grave_position(self):
+        return self.grave.position
+
+    def owner_name(self):
+        return self.grave.owner.firt_name + self.grave.owner.last_name
+
+    # receipt_number = models.BigIntegerField(_('receipt_number'))
+    # deceased_person = models.ForeignKey(Person)
+    # deceased_person.is_deceased = True
+    # funeral_date = models.DateTimeField(_('funeral_date'))
+
+
+# DONE  -   cimitirul – parcela – numărul mormântului     
+# numele, prenumele şi domiciliul deţinătorului, 
+# nr. chitanţei cu care s-a făcut plata locului de mormânt, 
+# numele, prenumele celor înmormântaţi, data înmormântării,
+# suprafaţa locului 
+# o coloană pentru observaţii, în care se va
+# arăta existenţa/inexistenţa construcţiilor funerare şi numărul actului în baza căruia s-au făcut
+# modificări privind schimbarea deţinătorului, fotografia scanată a locului de veci

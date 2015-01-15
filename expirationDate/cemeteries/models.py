@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from persons.models import Person
+from registers.models import WithImageMixin
 
 
 class Cemetery(models.Model):
@@ -18,11 +19,23 @@ class Cemetery(models.Model):
     def __str__(self):
         return self.name
 
-# TODO: sa decidem daca mai avem nevoie de modelul asta avand in vedere ca 
-# toate informatiile se regasesc in modelul grave
-class RestingPlace(models.Model):
-    cemetery = models.ForeignKey(Cemetery, related_name='resting_places')
-    resident = models.ForeignKey(Person, related_name='resting_places')
-    parcel = models.SmallIntegerField(_('parcel'))
-    row = models.SmallIntegerField(_('row'))
-    position = models.SmallIntegerField(_('position'))
+
+class Grave(WithImageMixin, models.Model):
+    cemetery = models.ForeignKey(Cemetery)
+    owner = models.ForeignKey(Person, related_name='graves',
+                              null=True, blank=True)
+    deceased = models.ForeignKey(Person)
+    receipt_number = models.BigIntegerField(_('receipt_number'))
+    funeral_date = models.DateTimeField(_('funeral date'))
+    surface_area = models.DecimalField(_('surface area'),
+                                       max_digits=5, decimal_places=2)
+    has_funeral_constructions = models.BooleanField(default=False)
+    parcel = models.SmallIntegerField(_('parcel'), default=0)
+    row = models.SmallIntegerField(_('row'), default=0)
+    position = models.SmallIntegerField(_('position'), default=0)
+    social_services_request = models.BigIntegerField(
+        _('IML request'), null=True, blank=True)
+
+    def __str__(self):
+        return "Cemetery: {} Position: {}".format(
+            self.cemetery.name, self.position)

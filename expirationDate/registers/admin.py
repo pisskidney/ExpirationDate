@@ -8,7 +8,7 @@ import reversion
 from registers.models import (
     UpcomingFuneral, Grave, FuneralMonument, AnnualDeathIndexRegister,
     AnnualOwnerlessDeathRegister, UpcomingFuneralArchive,
-    GraveOwnershipRequestsRegister
+    GraveOwnershipRequestsRegister, GravesRegister
 )
 
 
@@ -103,6 +103,14 @@ class GraveOwnershipRequestsRegisterAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, object=False):
         return False
 
+
+class GravesRegisterAdmin(admin.ModelAdmin):
+    list_display = ('cemetery_name', 'parcel', 'grave_position',
+                    'owner_name')
+
+    def get_queryset(self, request):
+        return self.model.objects.all()
+
 admin.site.register(UpcomingFuneral, UpcomingFuneralAdmin)
 admin.site.register(UpcomingFuneralArchive, UpcomingFuneralAdminArchive)
 admin.site.register(Grave, GraveAdmin)
@@ -112,3 +120,4 @@ admin.site.register(AnnualOwnerlessDeathRegister,
                     AnnualOwnerlessDeathRegisterAdmin)
 admin.site.register(GraveOwnershipRequestsRegister,
                     GraveOwnershipRequestsRegisterAdmin)
+admin.site.register(GravesRegister, GravesRegisterAdmin)
