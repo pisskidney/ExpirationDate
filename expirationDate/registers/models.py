@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
+from simple_history.models import HistoricalRecords
 
 from persons.models import Person
 from cemeteries.models import Cemetery
