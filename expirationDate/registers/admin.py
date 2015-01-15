@@ -72,9 +72,8 @@ class GraveAdmin(reversion.VersionAdmin):
 class FuneralMonumentAdmin(reversion.VersionAdmin):
     form = GraveAdminForm
     list_display = ('cemetery', 'owner', 'deceased', 'receipt_number',
-                    'funeral_date', 'surface_area', 'parcel', 'row',
-                    'position', 'social_services_request',
-                    'render_image')
+                    'surface_area', 'parcel', 'row', 'position',
+                    'social_services_request', 'render_image')
 
     list_display_links = ('owner', 'deceased')
 

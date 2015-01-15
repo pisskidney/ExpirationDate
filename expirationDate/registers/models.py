@@ -53,7 +53,6 @@ class Grave(WithImageMixin, models.Model):
             new_record.save()
 
 
-
 class UpcomingFuneral(models.Model):
     deceased = models.ForeignKey(Person, related_name="upcomming_funerals")
     grave = models.ForeignKey(
