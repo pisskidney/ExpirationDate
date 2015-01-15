@@ -1,4 +1,5 @@
 from django.db import models
+from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from persons.constants import PersonGender, PersonReligion
@@ -11,6 +12,8 @@ class Person(models.Model):
     date_of_death = models.DateField(_('date of death'), null=True, blank=True)
     birth_place = models.CharField(_('birth place'), max_length=100,
                                    blank=True)
+    funeral_date = models.DateTimeField(_('funeral date'), null=True,
+                                        blank=True)
     address = models.CharField(_('address'), max_length=200, blank=True)
     postcode = models.CharField(_('postcode'), max_length=10, blank=True,
                                 help_text=_('(e.g.:1234 AB)'))
@@ -38,10 +41,7 @@ class Person(models.Model):
     def full_name(self):
         return "{} {}".format(self.first_name, self.last_name)
 
-    # CRAPA AICI
-    # ar putea fi modifica adminu ca si la GraveAdmin sau intr-un mod mai destept
-    def save(self, *args, **kwargs):
-        if bool(self.is_deceased) != bool(self.date_of_death):
-            raise ValueError("If the person died you must"
-                             "supply the date of death")
-        return super().save(args, kwargs)
+    def clean_fields(self, *args, **kwargs):
+        if self.is_deceased and not self.date_of_death:
+            raise ValidationError("If the person died you must"
+                                  "supply the date of death")
