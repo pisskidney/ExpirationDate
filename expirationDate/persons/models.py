@@ -38,8 +38,10 @@ class Person(models.Model):
     def full_name(self):
         return "{} {}".format(self.first_name, self.last_name)
 
+    # CRAPA AICI
+    # ar putea fi modifica adminu ca si la GraveAdmin sau intr-un mod mai destept
     def save(self, *args, **kwargs):
-        if any([self.is_deceased, self.date_of_death]):
+        if bool(self.is_deceased) != bool(self.date_of_death):
             raise ValueError("If the person died you must"
                              "supply the date of death")
         return super().save(args, kwargs)
