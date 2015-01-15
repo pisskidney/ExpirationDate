@@ -61,11 +61,18 @@ class GraveAdmin(reversion.VersionAdmin):
                      'receipt_number', 'funeral_date']
 
 
-class FuneralMonumentAdmin(reversion.VersionAdmin):
-    list_display = ('location', 'owner', 'deceased',
-                    'receipt_number', 'funeral_date',
-                    'surface_area', 'render_image')
-    search_fields = ['location', 'owner', 'funeral_date']
+class FuneralMonumentAdmin(GraveAdmin):
+    exclude = ['cemetery', 'funeral_date']
+    # form = GraveAdminForm
+    # list_display = ('owner', 'deceased', 'receipt_number',
+    #                 'surface_area', 'parcel', 'row',
+    #                 'position', 'social_services_request',
+    #                 'render_image')
+
+    # list_display_links = ('owner', 'deceased')
+
+    # search_fields = ['owner__first_name', 'owner__last_name',
+    #                  'receipt_number']
 
 
 class AnnualDeathIndexRegisterAdmin(admin.ModelAdmin):
